@@ -9,8 +9,8 @@ config.read('balde.conf')
 
 TOKEN = config['BALDE']['TOKEN']
 bot = telebot.TeleBot(TOKEN)
+channelid = config['BALDE']['CHANNELID']
 groupid = config['BALDE']['GROUPID']
-cgroupid = config['BALDE']['CGROUPID']
 
 button1 = types.InlineKeyboardMarkup()
 button_post = types.InlineKeyboardButton('Postar', callback_data="/postar")
@@ -31,14 +31,14 @@ def check_member(chatid, userid):
 @bot.message_handler(commands=['start', 'cancelar'])
 def bot_start(message):
     bot.send_chat_action(message.chat.id, 'typing')
-    if not check_member(cgroupid, message.chat.id):
+    if not check_member(groupid, message.chat.id):
         bot.reply_to(message, 'https://calango.club')
     else:
         bot.reply_to(message, 'Para acrescentar algo ao balde, por favor, me envie uma foto do ítem.')
 
 @bot.message_handler(content_types=['photo'])
 def bot_photo(message):
-    if not check_member(cgroupid, message.chat.id):
+    if not check_member(groupid, message.chat.id):
         bot.reply_to(message, 'https://calango.club')
     else:
         bot.send_chat_action(message.chat.id, 'typing')
@@ -65,8 +65,8 @@ def post(call):
         pass
     bot.edit_message_caption(call.message.caption, call.from_user.id, call.message.id)
     desc = '{}\nDias restantes no balde: {}'
-    msg = bot.send_photo(groupid, call.message.photo[0].file_id, desc.format(call.message.caption, 7), reply_markup=button2)
-    bot.pin_chat_message(groupid, msg.message_id, disable_notification=True)
+    msg = bot.send_photo(channelid, call.message.photo[0].file_id, desc.format(call.message.caption, 7), reply_markup=button2)
+    bot.pin_chat_message(channelid, msg.message_id, disable_notification=True)
     db_ops.update('Balde', 'post', msg.message_id, 'post', str(call.from_user.id))
 
 
@@ -77,18 +77,18 @@ def want(call):
     except:
         pass
    
-    if check_member(cgroupid, call.from_user.id):
+    if check_member(groupid, call.from_user.id):
         post_text = db_ops.select('Balde', 'post', str(call.message.id))
         want_msg = '{}\n<a href="tg://user?id={}">{}</a> tem 7 dias para buscar.'.format(post_text[3], call.from_user.id, call.from_user.first_name)
-        bot.edit_message_caption(want_msg, groupid, call.message.id, parse_mode='HTML')
+        bot.edit_message_caption(want_msg, channelid, call.message.id, parse_mode='HTML')
         db_ops.update('Balde', 'newp', call.from_user.id, 'post', call.message.id)
         db_ops.update('Balde', 'name', call.from_user.first_name, 'post', call.message.id)
         db_ops.update('Balde', 'days', 7, 'post', call.message.id)
-        bot.unpin_chat_message(groupid, call.message.id)
+        bot.unpin_chat_message(channelid, call.message.id)
 
 @bot.message_handler(content_types=['pinned_message'])
 @bot.channel_post_handler(content_types=['pinned_message'])
 def generic_file(message):
-    bot.delete_message(groupid, message.message_id)
+    bot.delete_message(channelid, message.message_id)
 
 bot.polling()

@@ -20,7 +20,7 @@ for post in posts:
     if days_left == 0:
         desc = '{}\nPrazo expirado.'.format(post[3])
         bot.edit_message_caption(desc, channelid, post[1], parse_mode='HTML')
-        bot.unpin_chat_message(channelid, sale[1])
+        bot.unpin_chat_message(channelid, post[1])
     elif int(post[5]) > 0:
         desc = '{}\n<a href="tg://user?id={}">{}</a> tem {} dias para buscar.'.format(post[3], post[5], post[6], days_left)
         bot.edit_message_caption(desc, channelid, post[1], parse_mode='HTML')

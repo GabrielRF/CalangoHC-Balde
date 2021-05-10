@@ -16,6 +16,27 @@ GROUPID = Id do grupo em que o bot fará a verificação se a pessoa faz parte a
 
 `pip install pytelegrambotapi`
 
+Por fim, é necessário um banco de dados e uma tabela para que tudo funcione.
+
+```
+import sqlite3
+
+db = 'CalangoHC'
+table = 'Balde'
+conn = sqlite3.connect(db)
+cursor = conn.cursor()
+aux = ('''CREATE TABLE {} (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    post TEXT,
+    photo TEXT,
+    desc TEXT,
+    days INT,
+    newp TEXT,
+    name TEXT);
+''').format(table)
+cursor.execute(aux)
+```
+
 ## Funcionamento
 
 O bot funciona com um simples 

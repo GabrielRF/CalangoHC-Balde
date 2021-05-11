@@ -21,6 +21,13 @@ button2.row(button_ask)
 
 MEMBER = ['creator', 'administrator', 'member']
 COMMANDS = ['/start']
+DESC = ('''
+<b>Balde de uma semana</b> ♻️
+
+Se o objeto passar uma semana no balde e ninguém der utilidade/levar embora, o objeto será descartado.
+
+O objetivo é manter o espaço otimizado e limpo, diminuindo a quantidade de objetos sem uso/utilidade. 
+''')
 
 def check_member(chatid, userid):
     status = bot.get_chat_member(chatid, userid).status
@@ -34,7 +41,8 @@ def bot_start(message):
     if not check_member(groupid, message.chat.id):
         bot.reply_to(message, 'https://calango.club')
     else:
-        bot.reply_to(message, 'Para acrescentar algo ao balde, por favor, me envie uma foto do ítem.')
+        bot.send_message(message.chat.id, DESC, parse_mode='HTML')
+        bot.send_message(message.chat.id, 'Para acrescentar algo ao balde, por favor, me envie uma foto do ítem.')
 
 @bot.message_handler(content_types=['photo'])
 def bot_photo(message):
